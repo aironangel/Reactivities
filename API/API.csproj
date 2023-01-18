@@ -2,12 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <!-- 8 - AM - 
+    when enable allow to define mandatory object declaring forcibly type either nullable or not. 
+    - if you declare "string" you impllicitly declare it as "mandatory" and a warning is showed to you when compiling
+    - if you declare "string?" you accept null value for the property
+    when disable you can declare object without specifying nullabillity "?".
+    set this option for the whole projects of solution for not having different behaviors
+     -->
+    <Nullable>disable</Nullable>
+    <!-- 8 - AM - when disable Allow to declare using in API.GlobalUsings.g.cs -->
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 

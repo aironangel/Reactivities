@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+// 8 - AM - attribute for making controller
 [ApiController]
+// 8 - AM - Route to map the controller to the first part of name: localhost:5000/weatherforecast
 [Route("[controller]")]
+// 8 - AM - Derive from ControllerBase which doesn't implement the view part. We will implement view via react
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
@@ -18,6 +21,7 @@ public class WeatherForecastController : ControllerBase
         _logger = logger;
     }
 
+// 8 - AM - End point specify the method to call for GET
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
