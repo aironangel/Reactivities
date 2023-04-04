@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using MediatR;
+using Application.Activities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,17 @@ builder.Services.AddDbContext<DataContext>(dbOption =>
     dbOption.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddCors(opt => 
+{
+  opt.AddPolicy("CorsPolicy", policy =>
+  {
+    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+  });
+});
+
+builder.Services.AddMediatR(typeof(List.Handler));
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,6 +39,8 @@ if (app.Environment.IsDevelopment())
 
 // 7 - AM - COMMENT TO USE ONLY HTTP
 //app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 

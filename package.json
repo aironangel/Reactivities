@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/aironangel/Reactivities/issues"
   },
-  "homepage": "https://github.com/aironangel/Reactivities#readme"
+  "homepage": "https://github.com/aironangel/Reactivities#readme",
+  "dependencies": {
+    "react-scripts": "^5.0.1"
+  }
 }
