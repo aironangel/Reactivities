@@ -35,10 +35,10 @@ const requests = {
 
 // expone the activities collection as the call to the api baseUrl + '/activities'
 const Activities = {
-  list: () => requests.get<Activity[]>('/activities'),
-  details: (id: string) => requests.get<Activity>(`activities/${id}̀`),
-  create: (activity: Activity) => requests.post<void>('/activities', activity),
-  update: (activity: Activity) => axios.put<void>(`/activities/${activity.id}̀`, activity),
+  list:     ()                    => requests.get<Activity[]>('/activities'),
+  details:  (id: string)          => requests.get<Activity>('activities/' + id),
+  create:   (activity: Activity)  => requests.post<void>('/activities', activity),
+  update:   (activity: Activity)  => requests.put<void>('/activities/' + activity.id, activity),
   // delete: (id: string) => requests.del<void>('/activities/f5812cdd-9fe5-429e-a8f3-7f143f24f0c4')
   delete: (id: string) => requests.del<void>('/activities/' + id)
 
