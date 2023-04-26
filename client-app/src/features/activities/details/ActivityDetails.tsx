@@ -1,13 +1,23 @@
 import { Button, Card, Image } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { observer } from "mobx-react-lite";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
 
-export  function ActivityDetails() {
+export default observer(function ActivityDetails() {
 
   const {activityStore} = useStore();
-  const {selectedActivity: activity} = activityStore;
+  const {selectedActivity: activity, loadActivity, loadingInitial} = activityStore;
+  // AM - 8 - useParams returns the collection of parameters from the url. The curly brackets spread the result an
+  // with the code {id} we access to the id parameter in the url
+  const {id} = useParams();
 
-  if (!activity) return <LoadingComponent />;
+  useEffect(() => {
+    if (id) loadActivity(id);
+  }, [id, loadActivity])
+
+  if (loadingInitial || !activity) return <LoadingComponent />;
 
   return (
     <Card fluid>
@@ -23,11 +33,10 @@ export  function ActivityDetails() {
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths='2'>
-          <Button onClick={() => activityStore.openForm(activity.id)} basic color="blue" content='Edit' />
-          <Button onClick={activityStore.cancelSelectedActivity} basic color="grey" content='Cancel' />
+          <Button as={Link} to={'/manage/' + activity.id}  basic color="blue" content='Edit' />
+          <Button as={Link} to='/activities' basic color="grey" content='Cancel' />
         </Button.Group>
       </Card.Content>
     </Card>
-
   )
-}
+})

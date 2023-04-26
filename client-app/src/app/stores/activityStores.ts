@@ -8,7 +8,7 @@ export default class ActivityStores {
   selectedActivity: Activity | undefined = undefined;
   editMode = false;
   loading = false;
-  loadingInitial = true;
+  loadingInitial = false;
 
 
   constructor() {
@@ -22,10 +22,11 @@ export default class ActivityStores {
   }
 
   loadActivities = async () => {
+    this.setLoadingInitial(true);
     try {
       const activities = await agent.Activities.list();
       activities.forEach(activity => {
-        activity.date = activity.date.split('T')[0];
+        this.setActivity(activity);
         this.activityRegistry.set(activity.id, activity);
       })
       this.setLoadingInitial(false);
@@ -34,7 +35,35 @@ export default class ActivityStores {
       console.log(error);
       this.setLoadingInitial(false);
     }
+    this.setLoadingInitial(false);
   }
+
+  loadActivity = async (id: string) => {
+    let activity = this.getActivity(id);
+    if (!activity){
+      this.setLoadingInitial(true);
+      try {
+        activity = await agent.Activities.details(id);
+        this.setActivity(activity);
+      } catch (error) {
+        console.log(error);
+      }
+      this.setLoadingInitial(false);
+    }
+    runInAction(() => this.selectedActivity = activity);
+    
+    return activity;
+  }
+
+  private setActivity(activity: Activity){
+    activity.date = activity.date.split('T')[0];
+
+  }
+
+  private getActivity = (id: string) => {
+    return this.activityRegistry.get(id);
+  }
+
 
   // AM - 7 
   // This allow to handle the state via observable
@@ -52,31 +81,34 @@ export default class ActivityStores {
     this.loading = state;
   }
 
+  // AM - 8
+  // This form are no longer needs due to presence of the routes
+  // // AM - 7
+  // // This method is used to selected an acticity
+  // selectActivity = (id: string) => {
+  //   this.selectedActivity = this.activityRegistry.get(id);
+  // }
 
-  // AM - 7
-  // This method is used to selected an acticity
-  selectActivity = (id: string) => {
-    this.selectedActivity = this.activityRegistry.get(id);
-  }
+  // // AM - 7
+  // // This method is used to cancel the selected an acticity
+  // cancelSelectedActivity = () => {
+  //   this.selectedActivity = undefined;
+  // }
 
-  // AM - 7
-  // This method is used to cancel the selected an acticity
-  cancelSelectedActivity = () => {
-    this.selectedActivity = undefined;
-  }
+  // openForm = (id?: string) => {
+  //   id ? this.selectActivity(id) : this.cancelSelectedActivity();
+  //   this.setEditMode(true);
+  // }
 
-  openForm = (id?: string) => {
-    id ? this.selectActivity(id) : this.cancelSelectedActivity();
-    this.setEditMode(true);
-  }
-
-  closeForm = () => {
-    this.setEditMode(false);
-  }
+  // closeForm = () => {
+  //   this.setEditMode(false);
+  // }
 
   createActivity = async (activity: Activity) => {
     this.setLoading(true);
-    activity.id = uuid();
+    if (!activity.id){
+      activity.id = uuid();
+    }
 
     try {
       await agent.Activities.create(activity);
@@ -97,7 +129,6 @@ export default class ActivityStores {
 
   updateActivity = async (activity: Activity) => {
     this.setLoading(true);
-    activity.id = uuid();
 
     try {
       await agent.Activities.update(activity);

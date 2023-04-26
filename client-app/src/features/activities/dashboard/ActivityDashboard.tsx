@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
 import ActivityList from './ActivityList';
-import { ActivityDetails } from '../details/ActivityDetails';
-import ActivityForm from '../form/ActivityForm';
 import { useStore } from '../../../app/stores/store';
 import { observer } from 'mobx-react-lite';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
 
 interface Props{
   activities: Activity[];
@@ -16,7 +15,18 @@ interface Props{
 export default observer(function ActivityDashboard(){
 
 const {activityStore} = useStore();
-const {selectedActivity, editMode} = activityStore;
+
+  // AM - 7 - {} means we are destructuring the object because intereseted only in activityStore of "useStore" 
+  // returned object.
+  useEffect(() => {
+    activityStore.loadActivities();
+  }, [activityStore])
+
+  
+  if (activityStore.loadingInitial) return <LoadingComponent content={'Loading App...'}/>
+
+
+
 
   return(
     <Grid>
@@ -24,14 +34,17 @@ const {selectedActivity, editMode} = activityStore;
         <ActivityList />
       </Grid.Column>
       <Grid.Column width='6'>
-        {selectedActivity && //this means that the ActivityDetails is showed only when selectedActivity is not null 
+        <h2>Activity Filters</h2>
+      </Grid.Column>
+    </Grid>
+  )
+})
+
+
+         /* {selectedActivity && //this means that the ActivityDetails is showed only when selectedActivity is not null 
           !editMode &&
         <ActivityDetails />}
         {
           editMode && 
           <ActivityForm />
-        }
-      </Grid.Column>
-    </Grid>
-  )
-})
+        }  */
